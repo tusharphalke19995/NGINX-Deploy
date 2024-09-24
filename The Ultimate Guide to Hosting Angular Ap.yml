@@ -1,0 +1,91 @@
+The Ultimate Guide to Hosting Angular Applications on NGINX
+#
+angular
+#
+nginx
+#
+javascript
+#
+typescript
+Hosting your Angular application on an NGINX server can enhance performance, provide better security, and enable easier configuration for production environments. Below is a step-by-step guide to deploying your Angular application on NGINX.
+
+Prerequisites
+
+NGINX installed: Ensure you have NGINX installed on your server. You can install it on a Linux-based system using:
+
+bash
+
+sudo apt update
+sudo apt install nginx
+Angular Application: Ensure your Angular application is ready for production and built using the following command:
+
+bash
+
+ng build --prod
+Access to Server: You should have SSH access or direct access to the server where you want to deploy your application.
+Step 1: Build Your Angular Application
+
+Run the following command in your Angular project directory to build the application for production:
+
+bash
+
+ng build --prod
+This command will generate the production-ready files in the dist folder of your project.
+
+Step 2: Copy Files to the Server
+
+You will need to copy the contents of your Angular dist folder to your server. You can use scp or rsync. Assuming your dist folder is named dist/my-angular-app, run:
+
+bash
+
+scp -r dist/my-angular-app/* username@your_server_ip:/var/www/html/
+Replace username with your server username and your_server_ip with your server’s IP address.
+
+Step 3: Configure NGINX
+
+Once the files are on the server, you need to configure NGINX to serve your Angular application. Create a new configuration file for your application:
+
+bash
+
+sudo nano /etc/nginx/sites-available/my-angular-app
+Insert the following configuration into the file:
+
+nginx
+
+server {
+listen 80;
+server_name your_domain.com; # Replace with your domain or server IP
+
+location / {
+    root /var/www/html; # Path to the folder where your files are located
+    try_files $uri $uri/ /index.html; # Fallback to index.html for Angular routing
+}
+
+error_page 404 /index.html; # Handle 404 errors by redirecting to index.html
+}
+Save and exit the editor.
+
+Step 4: Enable the Configuration
+
+Create a symbolic link to enable the site configuration:
+
+bash
+
+sudo ln -s /etc/nginx/sites-available/my-angular-app /etc/nginx/sites-enabled/
+Step 5: Test Your NGINX Configuration
+
+Before restarting NGINX, you should test the configuration to ensure there are no syntax errors:
+
+bash
+
+sudo nginx -t
+If everything is correct, you’ll see a message indicating the test was successful.
+
+Step 6: Restart NGINX
+
+Restart NGINX to apply the changes:
+
+bash
+
+sudo systemctl restart nginx
+Step 7: Access Your Application
